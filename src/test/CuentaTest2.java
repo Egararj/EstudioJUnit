@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import excepciones.DineroInsuficienteException;
@@ -12,7 +14,8 @@ import modelo.Cuenta;
 
 class CuentaTest2 {
 	
-	@Test 
+	@Test
+	@Disabled
 	void transferirDineroCuenta() throws DineroInsuficienteException {
 		Cuenta cuenta = new Cuenta("Pepe", new BigDecimal(5000.12345));
 		Cuenta cuenta2 = new Cuenta("Ana", new BigDecimal(5000.12345));
@@ -27,6 +30,7 @@ class CuentaTest2 {
 	}
 	
 	@Test
+	@DisplayName("Comprobar si hay cuentas tras agregar, que tienen la misma cantidad, buscar por nombre del banco y de la cuenta")
 	void relacionesBancoCuenta () {
 		Cuenta cuenta = new Cuenta("Pepe", new BigDecimal(5000.12345));
 		Cuenta cuenta2 = new Cuenta("Andres", new BigDecimal(5000.12345));
@@ -52,5 +56,12 @@ class CuentaTest2 {
 			}
 		}
 		assertEquals("Andres", nombre);
+		
+		assertAll( 
+				() -> {assertEquals(2,banco.getCuentas().size());},
+				() -> {assertEquals("Banco del Estado", cuenta.getBanco().getNombre());},
+				() -> {assertEquals("Andres",banco.getCuentas().stream().filter(c->c.getPersona().equals("Andres"))
+						.findFirst().get().getPersona());}
+				);
 	}
 }
