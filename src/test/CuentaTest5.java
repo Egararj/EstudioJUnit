@@ -3,14 +3,18 @@ package test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvFileSource;
+import org.junit.jupiter.params.provider.MethodSources;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import excepciones.DineroInsuficienteException;
+import excepciones.DniException;
 import modelo.Cuenta;
 
 class CuentaTest5 {
@@ -39,5 +43,23 @@ class CuentaTest5 {
 		cuenta.debito(new BigDecimal (monto));
 		assertNotNull (cuenta.getSaldo());
 		assertTrue(cuenta.getSaldo().compareTo(BigDecimal.ZERO)>0);
+	}
+	
+	@ParameterizedTest
+	@MethodSources("proveedorDnis")
+	void validarDni_parametrizado(String dni, boolean esperadoValido) {
+		if(esperadoValido) {
+			assertDoesNotThrow(() -> new User("Test", "test", "pass", dni));
+		} else {
+			assertThrows(DniException.class, () -> new User("Test", "test", "pass", dni));
+		}
+	}
+	
+	private static Stream<Arguments> proveedorDnis () {
+		
+		return Stream.of(
+				Arguments.of("12345678Z", true),
+				Arguments.of("DWFWEF", false),
+				Arguments.of(null, false));
 	}
 }
